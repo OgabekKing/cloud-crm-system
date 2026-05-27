@@ -48,9 +48,9 @@ const { Sider, Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 function App() {
-  const API_URL = "http://127.0.0.1:8000/customers/";
-  const ORDERS_API_URL = "http://127.0.0.1:8000/orders/";
-  const EMPLOYEES_API_URL = "http://127.0.0.1:8000/employees/";
+  const API_URL = "https://cloud-crm-system.onrender.com/customers/";
+  const ORDERS_API_URL = "https://cloud-crm-system.onrender.com/orders/";
+  const EMPLOYEES_API_URL = "https://cloud-crm-system.onrender.com/employees/";
   const [open, setOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
