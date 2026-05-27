@@ -347,7 +347,7 @@
 }
 
 .bottom-navbar {
-  display: none;
+    display: flex;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -379,6 +379,7 @@
   color: #475569;
   transition: all 0.25s ease;
   cursor: pointer;
+    user-select: none;
 }
 
 .bottom-navbar-item svg {
@@ -389,6 +390,36 @@
   font-size: 12px;
   line-height: 1.2;
 }
+
+  /* Increase touch target and ensure main content isn't hidden */
+  .bottom-navbar-inner {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  /* Ensure body/content has enough bottom padding */
+  .content {
+    padding-bottom: 140px;
+  }
+
+  /* Header buttons stack on small screens */
+  .header {
+    padding: 16px 20px;
+  }
+
+  .header .ant-space {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .header .ant-btn {
+    min-width: 100px;
+  }
 
 .bottom-navbar-item.active {
   background: #eff6ff;

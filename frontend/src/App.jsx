@@ -2024,11 +2024,17 @@ function App() {
         </Content>
       </Layout>
 
-      <div className="bottom-navbar">
+      <div className="bottom-navbar" role="navigation" aria-label="Bottom navigation">
         <div className="bottom-navbar-inner">
           {bottomNavItems.map((item) => (
             <div
               key={item.key}
+              role="button"
+              tabIndex={0}
+              aria-label={item.label}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") setActiveNav(item.key);
+              }}
               className={activeNav === item.key ? "bottom-navbar-item active" : "bottom-navbar-item"}
               onClick={() => setActiveNav(item.key)}
             >
