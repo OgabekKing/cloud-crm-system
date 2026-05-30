@@ -41,6 +41,16 @@ import {
 } from "@ant-design/icons";
 const Column = lazy(() => import("@ant-design/charts").then(module => ({ default: module.Column })));
 const Pie = lazy(() => import("@ant-design/charts").then(module => ({ default: module.Pie })));
+
+// Lazy load page components
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const CustomersPage = lazy(() => import("./pages/CustomersPage"));
+const EmployeesPage = lazy(() => import("./pages/EmployeesPage"));
+const OrdersPage = lazy(() => import("./pages/OrdersPage"));
+const AnalyticsPage = lazy(() => import("./pages/AnalyticsPage"));
+const CloudPage = lazy(() => import("./pages/CloudPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+
 import "antd/dist/reset.css";
 import "./App.css";
 import axios from "axios";
@@ -1117,453 +1127,149 @@ function App() {
   };
 
   const renderSectionContent = () => {
+    const pageLoadingFallback = <div style={{ padding: "40px", textAlign: "center" }}>Loading page...</div>;
+
     switch (activeNav) {
       case "dashboard":
         return (
-          <>
-            <Row gutter={[20, 20]}>
-              <Col xs={24} sm={12} lg={6}>
-                <Card className="kpi-card" styles={{ body: { padding: 18 } }}>
-                  <Statistic title="Total Customers" value={customers.length} />
-                </Card>
-              </Col>
-
-              <Col xs={24} sm={12} lg={6}>
-                <Card className="kpi-card" styles={{ body: { padding: 18 } }}>
-                  <Statistic
-                    title="VIP Clients"
-                    value={customers.filter((c) => c.status === "VIP").length}
-                  />
-                </Card>
-              </Col>
-
-              <Col xs={24} sm={12} lg={6}>
-                <Card className="kpi-card" styles={{ body: { padding: 18 } }}>
-                  <Statistic
-                    title="Active Clients"
-                    value={customers.filter((c) => c.status === "Active").length}
-                  />
-                </Card>
-              </Col>
-
-              <Col xs={24} sm={12} lg={6}>
-                <Card className="kpi-card" styles={{ body: { padding: 18 } }}>
-                  <Statistic title="Total Revenue" value={totalRevenue} prefix="$" />
-                </Card>
-              </Col>
-            </Row>
-
-            <Row gutter={[20, 20]} className="analytics-row">
-              <Col xs={24}>
-                <Card
-                  className="analytics-main-card"
-                  title="Customer Analytics"
-                  styles={{ body: { padding: 24 } }}
-                >
-                  <Text type="secondary">
-                    Top 10 customers by deal value. Chart is sorted descending and sized for readability.
-                  </Text>
-                  <div style={{ marginTop: 16 }}>
-                    <Suspense fallback={<div>Loading chart...</div>}>
-                      <Column {...dealValueConfig} />
-                    </Suspense>
-                  </div>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row gutter={[20, 20]} className="analytics-row">
-              <Col xs={24} md={12}>
-                <Card
-                  className="analytics-side-card"
-                  title="Customer Status Distribution"
-                  styles={{ body: { padding: 24 } }}
-                >
-                  <Text type="secondary">
-                    Current customer segment breakdown by VIP, Active, and Pending accounts.
-                  </Text>
-                  <div style={{ marginTop: 16 }}>
-                    <Row gutter={[16, 16]}>
-                      {statusSummary.map((item) => (
-                        <Col xs={24} sm={8} key={item.label}>
-                          <Statistic title={item.label} value={item.count} />
-                          <Progress
-                            percent={Math.round((item.count / totalStatusCount) * 100)}
-                            strokeColor={item.color}
-                            size="small"
-                            format={(percent) => `${percent}%`}
-                          />
-                        </Col>
-                      ))}
-                    </Row>
-                  </div>
-                  <div style={{ marginTop: 24 }}>
-                    {hasCustomerStatusData ? (
-                      <Suspense fallback={<div>Loading chart...</div>}>
-                        <Pie {...statusConfig} />
-                      </Suspense>
-                    ) : (
-                      <Text type="secondary">No customer status data available.</Text>
-                    )}
-                  </div>
-                </Card>
-              </Col>
-              <Col xs={24} md={12}>
-                <Card
-                  className="analytics-side-card"
-                  title="Recent Activity"
-                  styles={{ body: { padding: 24 } }}
-                >
-                  <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-                    {customers.slice(0, 4).map((item) => (
-                      <Card key={item.id || item.key} size="small">
-                        <Card.Meta
-                          avatar={<Avatar>{item.name.charAt(0).toUpperCase()}</Avatar>}
-                          title={`${item.name} added to CRM`}
-                          description={`Status: ${item.status} • Deal value: $${Number(
-                            item.value || 0
-                          ).toLocaleString()}`}
-                        />
-                      </Card>
-                    ))}
-                  </Space>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row gutter={[20, 20]} className="analytics-row">
-              <Col xs={24}>
-                <Card
-                  className="analytics-summary-card analytics-order-summary-card"
-                  title="Order Performance Summary"
-                  styles={{ body: { padding: 18 } }}
-                >
-                  <Text type="secondary" style={{ marginBottom: 16, display: "block" }}>
-                    Key order performance metrics in a compact dashboard widget.
-                  </Text>
-                  <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={12} md={6}>
-                      <Card className="analytics-mini-stat-card" styles={{ body: { padding: 16 } }}>
-                        <Statistic title="Total Orders" value={totalOrders} />
-                      </Card>
-                    </Col>
-                    <Col xs={24} sm={12} md={6}>
-                      <Card className="analytics-mini-stat-card" styles={{ body: { padding: 16 } }}>
-                        <Statistic title="Completed" value={completedOrders} />
-                      </Card>
-                    </Col>
-                    <Col xs={24} sm={12} md={6}>
-                      <Card className="analytics-mini-stat-card" styles={{ body: { padding: 16 } }}>
-                        <Statistic title="Processing" value={processingOrders} />
-                      </Card>
-                    </Col>
-                    <Col xs={24} sm={12} md={6}>
-                      <Card className="analytics-mini-stat-card" styles={{ body: { padding: 16 } }}>
-                        <Statistic title="Order Revenue" value={orderRevenue} prefix="$" />
-                      </Card>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
-            </Row>
-          </>
+          <Suspense fallback={pageLoadingFallback}>
+            <DashboardPage
+              customers={customers}
+              orders={orders}
+              totalRevenue={totalRevenue}
+              totalOrders={totalOrders}
+              completedOrders={completedOrders}
+              processingOrders={processingOrders}
+              orderRevenue={orderRevenue}
+              statusSummary={statusSummary}
+              statusData={statusData}
+              dealValueData={dealValueData}
+              statusConfig={statusConfig}
+              dealValueConfig={dealValueConfig}
+              hasCustomerStatusData={hasCustomerStatusData}
+              hasDealValueData={hasDealValueData}
+              totalStatusCount={totalStatusCount}
+            />
+          </Suspense>
         );
 
       case "customers":
         return (
-          <>
-            <Space wrap style={{ marginBottom: 18 }}>
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpen(true)}>
-                Add Customer
-              </Button>
-            </Space>
-            <Card 
-              className="dashboard-card" 
-              title="Customer Database"
-              styles={{ body: { padding: 24 } }}
-              extra={
-                <Space>
-                  <Button
-                    icon={<EditOutlined />}
-                    onClick={() => {
-                      if (bulkSelectMode === "customers") {
-                        setBulkSelectMode(null);
-                        setSelectedCustomerIds([]);
-                      } else {
-                        setBulkSelectMode("customers");
-                      }
-                    }}
-                  >
-                    {bulkSelectMode === "customers" ? "Done" : "Bulk Edit"}
-                  </Button>
-                  {bulkSelectMode === "customers" && selectedCustomerIds.length > 0 && (
-                    <Popconfirm
-                      title={`Delete ${selectedCustomerIds.length} customers?`}
-                      onConfirm={bulkDeleteCustomers}
-                    >
-                      <Button danger>Delete Selected</Button>
-                    </Popconfirm>
-                  )}
-                  <Button
-                    icon={<FullscreenOutlined />}
-                    onClick={() => openFullScreen("customers")}
-                  >
-                    Fullscreen
-                  </Button>
-                </Space>
-              }
-            >
-              {databaseSection}
-            </Card>
-          </>
+          <Suspense fallback={pageLoadingFallback}>
+            <CustomersPage
+              customers={customers}
+              filteredCustomers={filteredCustomers}
+              search={search}
+              setSearch={setSearch}
+              columns={columns}
+              bulkSelectMode={bulkSelectMode}
+              setBulkSelectMode={setBulkSelectMode}
+              selectedCustomerIds={selectedCustomerIds}
+              setSelectedCustomerIds={setSelectedCustomerIds}
+              deleteCustomer={deleteCustomer}
+              bulkDeleteCustomers={bulkDeleteCustomers}
+              openEditModal={openEditModal}
+              setOpen={setOpen}
+            />
+          </Suspense>
         );
 
       case "employees":
         return (
-          <>
-            <Row gutter={[20, 20]} style={{ marginBottom: 16 }}>
-              <Col xs={24} sm={12} md={6}>
-                <Card>
-                  <Statistic title="Total Employees" value={totalEmployees} />
-                </Card>
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Card>
-                  <Statistic title="Active Employees" value={activeEmployees} />
-                </Card>
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Card>
-                  <Statistic title="Average Salary" value={averageSalary} prefix="$" />
-                </Card>
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Card>
-                  <Statistic title="Highest Salary" value={highestSalary} prefix="$" />
-                </Card>
-              </Col>
-            </Row>
-            <Card
-              className="dashboard-card"
-              title="Employees"
-              styles={{ body: { padding: 24 } }}
-              extra={
-                <Space>
-                  <Button
-                    icon={<EditOutlined />}
-                    onClick={() => {
-                      if (bulkSelectMode === "employees") {
-                        setBulkSelectMode(null);
-                        setSelectedEmployeeIds([]);
-                      } else {
-                        setBulkSelectMode("employees");
-                      }
-                    }}
-                  >
-                    {bulkSelectMode === "employees" ? "Done" : "Bulk Edit"}
-                  </Button>
-                  {bulkSelectMode === "employees" && selectedEmployeeIds.length > 0 && (
-                    <Popconfirm
-                      title={`Delete ${selectedEmployeeIds.length} employees?`}
-                      onConfirm={bulkDeleteEmployees}
-                    >
-                      <Button danger>Delete Selected</Button>
-                    </Popconfirm>
-                  )}
-                  <Button icon={<FullscreenOutlined />} onClick={() => openFullScreen("employees")}>Full Screen</Button>
-                </Space>
-              }
-            >
-              <Space wrap style={{ marginBottom: 18, width: "100%", justifyContent: "space-between" }}>
-                <Input
-                  placeholder="Search employees..."
-                  value={employeeSearch}
-                  onChange={(e) => setEmployeeSearch(e.target.value)}
-                  allowClear
-                  style={{ maxWidth: 360, width: "100%" }}
-                />
-                <Select
-                  placeholder="Filter by status"
-                  value={employeeStatusFilter}
-                  onChange={(value) => setEmployeeStatusFilter(value)}
-                  allowClear
-                  style={{ maxWidth: 220, width: "100%" }}
-                  options={[
-                    { value: "Active", label: "Active" },
-                    { value: "Onboarding", label: "Onboarding" },
-                    { value: "Inactive", label: "Inactive" },
-                  ]}
-                />
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => {
-                    setEditingEmployee(null);
-                    employeeForm.resetFields();
-                    setIsEmployeeModalOpen(true);
-                  }}
-                >
-                  Add Employee
-                </Button>
-              </Space>
-              <Table
-                columns={employeeColumns}
-                dataSource={filteredEmployees}
-                scroll={{ x: "max-content" }}
-                pagination={{ pageSize: 6 }}
-              />
-            </Card>
-          </>
+          <Suspense fallback={pageLoadingFallback}>
+            <EmployeesPage
+              employees={employees}
+              filteredEmployees={filteredEmployees}
+              employeeSearch={employeeSearch}
+              setEmployeeSearch={setEmployeeSearch}
+              employeeStatusFilter={employeeStatusFilter}
+              setEmployeeStatusFilter={setEmployeeStatusFilter}
+              employeeColumns={employeeColumns}
+              bulkSelectMode={bulkSelectMode}
+              setBulkSelectMode={setBulkSelectMode}
+              selectedEmployeeIds={selectedEmployeeIds}
+              setSelectedEmployeeIds={setSelectedEmployeeIds}
+              deleteEmployee={deleteEmployee}
+              bulkDeleteEmployees={bulkDeleteEmployees}
+              openEmployeeEditModal={openEmployeeEditModal}
+              setIsEmployeeModalOpen={setIsEmployeeModalOpen}
+              employeeForm={employeeForm}
+              totalEmployees={totalEmployees}
+              activeEmployees={activeEmployees}
+              averageSalary={averageSalary}
+              highestSalary={highestSalary}
+            />
+          </Suspense>
         );
 
       case "orders":
         return (
-          <>
-            <Row gutter={[20, 20]} style={{ marginBottom: 16 }}>
-              <Col xs={24} sm={12} md={6}>
-                <Card>
-                  <Statistic title="Total Orders" value={totalOrders} />
-                </Card>
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Card>
-                  <Statistic title="Completed" value={completedOrders} />
-                </Card>
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Card>
-                  <Statistic title="Pending" value={pendingOrders} />
-                </Card>
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Card>
-                  <Statistic title="Order Revenue" value={orderRevenue} prefix="$" />
-                </Card>
-              </Col>
-            </Row>
-
-            <Card
-              className="dashboard-card"
-              title="Orders"
-              styles={{ body: { padding: 24 } }}
-              extra={
-                <Space>
-                  <Button
-                    icon={<EditOutlined />}
-                    onClick={() => {
-                      if (bulkSelectMode === "orders") {
-                        setBulkSelectMode(null);
-                        setSelectedOrderIds([]);
-                      } else {
-                        setBulkSelectMode("orders");
-                      }
-                    }}
-                  >
-                    {bulkSelectMode === "orders" ? "Done" : "Bulk Edit"}
-                  </Button>
-                  {bulkSelectMode === "orders" && selectedOrderIds.length > 0 && (
-                    <Popconfirm
-                      title={`Delete ${selectedOrderIds.length} orders?`}
-                      onConfirm={bulkDeleteOrders}
-                    >
-                      <Button danger>Delete Selected</Button>
-                    </Popconfirm>
-                  )}
-                  <Button icon={<FullscreenOutlined />} onClick={() => openFullScreen("orders")}>Full Screen</Button>
-                </Space>
-              }
-            >
-              <Space wrap style={{ marginBottom: 18, width: "100%", justifyContent: "space-between" }}>
-                <Input
-                  placeholder="Search orders..."
-                  value={orderSearch}
-                  onChange={(e) => setOrderSearch(e.target.value)}
-                  allowClear
-                  style={{ maxWidth: 320, width: "100%" }}
-                />
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => {
-                    setEditingOrder(null);
-                    orderForm.resetFields();
-                    setIsOrderModalOpen(true);
-                  }}
-                >
-                  Add Order
-                </Button>
-              </Space>
-              <Table
-                columns={orderColumns}
-                dataSource={filteredOrders}
-                scroll={{ x: "max-content" }}
-                pagination={{ pageSize: 5 }}
-              />
-            </Card>
-          </>
+          <Suspense fallback={pageLoadingFallback}>
+            <OrdersPage
+              orders={orders}
+              filteredOrders={filteredOrders}
+              orderSearch={orderSearch}
+              setOrderSearch={setOrderSearch}
+              orderColumns={orderColumns}
+              bulkSelectMode={bulkSelectMode}
+              setBulkSelectMode={setBulkSelectMode}
+              selectedOrderIds={selectedOrderIds}
+              setSelectedOrderIds={setSelectedOrderIds}
+              deleteOrder={deleteOrder}
+              bulkDeleteOrders={bulkDeleteOrders}
+              openOrderEditModal={openOrderEditModal}
+              setIsOrderModalOpen={setIsOrderModalOpen}
+              orderForm={orderForm}
+              totalOrders={totalOrders}
+              completedOrders={completedOrders}
+              pendingOrders={pendingOrders}
+              orderRevenue={orderRevenue}
+            />
+          </Suspense>
         );
 
       case "analytics":
         return (
-          <>
-            <Row gutter={[20, 20]} style={{ marginBottom: 20 }}>
-              <Col xs={24} sm={12} xl={6}>
-                <Card className="analytics-kpi-card" title="Total Revenue" styles={{ body: { padding: 16 } }}>
-                  <Statistic title="" value={totalRevenue} prefix="$" />
-                </Card>
-              </Col>
-              <Col xs={24} sm={12} xl={6}>
-                <Card className="analytics-kpi-card" title="VIP Clients" styles={{ body: { padding: 16 } }}>
-                  <Statistic title="" value={customers.filter((c) => c.status === "VIP").length} />
-                </Card>
-              </Col>
-              <Col xs={24} sm={12} xl={6}>
-                <Card className="analytics-kpi-card" title="Total Orders" styles={{ body: { padding: 16 } }}>
-                  <Statistic title="" value={totalOrders} />
-                </Card>
-              </Col>
-              <Col xs={24} sm={12} xl={6}>
-                <Card className="analytics-kpi-card" title="Order Revenue" styles={{ body: { padding: 16 } }}>
-                  <Statistic title="" value={orderRevenue} prefix="$" />
-                </Card>
-              </Col>
-            </Row>
-            {analyticsSection}
-          </>
+          <Suspense fallback={pageLoadingFallback}>
+            <AnalyticsPage
+              customers={customers}
+              orders={orders}
+              totalRevenue={totalRevenue}
+              totalOrders={totalOrders}
+              completedOrders={completedOrders}
+              processingOrders={processingOrders}
+              orderRevenue={orderRevenue}
+              dealValueData={dealValueData}
+              statusData={statusData}
+              orderStatusData={orderStatusData}
+              dealValueConfig={dealValueConfig}
+              statusConfig={statusConfig}
+              orderStatusConfig={orderStatusConfig}
+              hasDealValueData={hasDealValueData}
+              hasCustomerStatusData={hasCustomerStatusData}
+              hasOrderStatusData={hasOrderStatusData}
+              orderStatusSummary={orderStatusSummary}
+            />
+          </Suspense>
         );
 
       case "cloud":
         return (
-          <Card className="dashboard-card" title="Cloud Network Overview" styles={{ body: { padding: 24 } }}>
-            {overviewSection}
-          </Card>
+          <Suspense fallback={pageLoadingFallback}>
+            <CloudPage customers={customers} />
+          </Suspense>
         );
 
       case "settings":
         return (
-          <Row gutter={[20, 20]}>
-            <Col xs={24} md={12}>
-              <Card title="Appearance" styles={{ body: { padding: 24 } }}>
-                <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-                  <Text>Toggle between light and dark mode to match your workspace.</Text>
-                  <Button type="primary" icon={themeIcon} onClick={toggleTheme}>
-                    {isDarkMode ? "Light Mode" : "Dark Mode"}
-                  </Button>
-                </Space>
-              </Card>
-            </Col>
-            <Col xs={24} md={12}>
-              <Card title="Account" styles={{ body: { padding: 24 } }}>
-                <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-                  <Text strong>Admin User</Text>
-                  <Text type="secondary">demo@cloudcrm.com</Text>
-                  <Button type="default" onClick={handleLogout}>
-                    Logout
-                  </Button>
-                </Space>
-              </Card>
-            </Col>
-          </Row>
+          <Suspense fallback={pageLoadingFallback}>
+            <SettingsPage
+              isDarkMode={isDarkMode}
+              toggleTheme={toggleTheme}
+              handleLogout={handleLogout}
+              themeIcon={themeIcon}
+            />
+          </Suspense>
         );
 
       default:
