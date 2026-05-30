@@ -1,4 +1,4 @@
-import {useEffect, useState } from "react";
+import {useEffect, useState, lazy, Suspense } from "react";
 import {
   ConfigProvider,
   theme as antdTheme,
@@ -39,7 +39,8 @@ import {
   SunOutlined,
   MoonOutlined,
 } from "@ant-design/icons";
-import { Column, Pie } from "@ant-design/charts";
+const Column = lazy(() => import("@ant-design/charts").then(module => ({ default: module.Column })));
+const Pie = lazy(() => import("@ant-design/charts").then(module => ({ default: module.Pie })));
 import "antd/dist/reset.css";
 import "./App.css";
 import axios from "axios";
@@ -1163,7 +1164,9 @@ function App() {
                     Top 10 customers by deal value. Chart is sorted descending and sized for readability.
                   </Text>
                   <div style={{ marginTop: 16 }}>
-                    <Column {...dealValueConfig} />
+                    <Suspense fallback={<div>Loading chart...</div>}>
+                      <Column {...dealValueConfig} />
+                    </Suspense>
                   </div>
                 </Card>
               </Col>
@@ -1196,7 +1199,9 @@ function App() {
                   </div>
                   <div style={{ marginTop: 24 }}>
                     {hasCustomerStatusData ? (
-                      <Pie {...statusConfig} />
+                      <Suspense fallback={<div>Loading chart...</div>}>
+                        <Pie {...statusConfig} />
+                      </Suspense>
                     ) : (
                       <Text type="secondary">No customer status data available.</Text>
                     )}
@@ -1575,7 +1580,9 @@ function App() {
           </Text>
           <div style={{ marginTop: 16 }}>
             {hasDealValueData ? (
-              <Column {...dealValueConfig} />
+              <Suspense fallback={<div>Loading chart...</div>}>
+                <Column {...dealValueConfig} />
+              </Suspense>
             ) : (
               <Text type="secondary">No customer deal value data available.</Text>
             )}
@@ -1590,7 +1597,9 @@ function App() {
           </Text>
           <div style={{ marginTop: 16 }}>
             {hasCustomerStatusData ? (
-              <Pie {...statusConfig} />
+              <Suspense fallback={<div>Loading chart...</div>}>
+                <Pie {...statusConfig} />
+              </Suspense>
             ) : (
               <Text type="secondary">No customer status data available.</Text>
             )}
@@ -1643,7 +1652,9 @@ function App() {
           <Row gutter={[16, 16]}>
             <Col xs={24} lg={16}>
               {hasOrderStatusData ? (
-                <Pie {...orderStatusConfig} />
+                <Suspense fallback={<div>Loading chart...</div>}>
+                  <Pie {...orderStatusConfig} />
+                </Suspense>
               ) : (
                 <Text type="secondary">No order status data available.</Text>
               )}
