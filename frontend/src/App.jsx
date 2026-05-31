@@ -59,7 +59,7 @@ const { Sider, Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 function App() {
-  const CUSTOMERS_API_URL = "https://d2hqdg9adqhzlf.cloudfront.net/customers/";
+  const API_URL = "https://d2hqdg9adqhzlf.cloudfront.net/customers/";
   const ORDERS_API_URL = "https://d2hqdg9adqhzlf.cloudfront.net/orders/";
   const EMPLOYEES_API_URL = "https://d2hqdg9adqhzlf.cloudfront.net/employees/";
   const [open, setOpen] = useState(false);
@@ -97,7 +97,7 @@ function App() {
   const [selectedOrderIds, setSelectedOrderIds] = useState([]);
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get(CUSTOMERS_API_URL);
+      const response = await axios.get(API_URL);
 
       const data = response.data.map((customer) => ({
         key: customer.id,
@@ -163,7 +163,7 @@ function App() {
 
   const addCustomer = async (values) => {
     try {
-      await axios.post(CUSTOMERS_API_URL, {
+      await axios.post(API_URL, {
         name: values.name,
         email: values.email,
         phone: values.phone,
@@ -191,7 +191,7 @@ function App() {
   };
   const deleteCustomer = async (id) => {
     try {
-      await axios.delete(`${CUSTOMERS_API_URL}${id}`);
+      await axios.delete(`${API_URL}${id}`);
 
       message.success("Customer deleted");
       notification.success({
@@ -218,7 +218,7 @@ function App() {
 
     try {
       await Promise.all(
-        selectedCustomerIds.map((id) => axios.delete(`${CUSTOMERS_API_URL}${id}`))
+        selectedCustomerIds.map((id) => axios.delete(`${API_URL}${id}`))
       );
       message.success(`Deleted ${selectedCustomerIds.length} customers`);
       setSelectedCustomerIds([]);
@@ -315,7 +315,7 @@ function App() {
     if (!editingCustomer) return;
 
     try {
-      await axios.put(`${CUSTOMERS_API_URL}${editingCustomer.id}`, {
+      await axios.put(`${API_URL}${editingCustomer.id}`, {
         name: values.name,
         email: values.email,
         phone: values.phone,
