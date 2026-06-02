@@ -1,0 +1,32 @@
+name: Cloud CRM CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: Backend Check
+        run: |
+          cd backend
+          python -m py_compile *.py
+
+      - name: CI Pipeline Success
+        run: echo "Cloud CRM CI/CD pipeline completed successfully"
