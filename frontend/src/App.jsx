@@ -59,9 +59,9 @@ const { Sider, Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 function App() {
-  const API_URL = "https://d2hqdg9adqhzlf.cloudfront.net/customers/";
-  const ORDERS_API_URL = "https://d2hqdg9adqhzlf.cloudfront.net/orders/";
-  const EMPLOYEES_API_URL = "https://d2hqdg9adqhzlf.cloudfront.net/employees/";
+  const API_URL = "https://clothescrm.duckdns.org/customers/";
+  const ORDERS_API_URL = "https://clothescrm.duckdns.org/orders/";
+  const EMPLOYEES_API_URL = "https://clothescrm.duckdns.org/employees/";
   const [open, setOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
