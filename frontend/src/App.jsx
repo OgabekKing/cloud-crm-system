@@ -1636,7 +1636,7 @@ function App() {
             </Form.Item>
 
             <Text type="secondary">
-              Demo credentials: admin / admin123
+              Demo credentials: admin 
             </Text>
           </Form>
         </Card>
