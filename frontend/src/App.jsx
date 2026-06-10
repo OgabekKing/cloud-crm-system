@@ -1691,7 +1691,7 @@ function App() {
       <Layout className="main-layout">
         <Header className="header">
           <div>
-            <Title level={3}>Customer Relationship Management</Title>
+            <Title level={3}>Customer Relationships Management</Title>
             <Text type="secondary">
               Cloud based CRM system for clothing wholesale business
             </Text>
