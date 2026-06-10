@@ -1613,7 +1613,7 @@ function App() {
             <Form.Item
               name="username"
               label="Username"
-              rules={[{ required: true, message: "Please enter your username" }]}
+              rules={[{ required: true, message: "Please enter your username CI/CD TEST" }]}
             >
               <Input prefix={<UserOutlined />} placeholder="admin" />
             </Form.Item>
@@ -2023,3 +2023,7 @@ function App() {
 }
 
 export default App;
+
+<div style={{background:"yellow",padding:"10px"}}>
+  CI/CD TEST - 10 June 2026
+</div>
