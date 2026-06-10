@@ -29,4 +29,12 @@ jobs:
           python -m py_compile *.py
 
       - name: CI Pipeline Success
-        run: echo "Cloud CRM CI/CD pipeline completed successfully"
+        run: echo "Build and test completed successfully"
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Success
+        run: echo "Vercel automatically deploys this project after push"
