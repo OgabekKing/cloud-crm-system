@@ -1660,7 +1660,7 @@ function App() {
         <div className="brand">
           <CloudOutlined className="brand-icon" />
           <div>
-            <h2>Cloud CRM</h2>
+            <h2>Retake CRM</h2>
             <p>Wholesale Company</p>
           </div>
         </div>
